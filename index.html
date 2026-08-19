@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Primary SEO -->
+<title>Brainrot — Measure Your Brainrot Score. A Free, Private Chrome Extension.</title>
+<meta name="description" content="Brainrot is a free, open-source Chrome extension that turns your browsing into a 0–100 Brainrot Score, tracks your 7-day trend, and gives you a daily plan to reverse it. 100% local — no accounts, no servers, nothing leaves your device." />
+<meta name="keywords" content="brainrot score, brainrot test, screen time tracker, digital wellbeing, attention span, doomscrolling, focus, chrome extension, dopamine detox, deep work, privacy" />
+<meta name="author" content="Brainrot contributors" />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#0A0A0A" />
+<link rel="canonical" href="https://brainrot.example/" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Brainrot" />
+<meta property="og:title" content="Brainrot — the number your feed doesn't want you to see" />
+<meta property="og:description" content="Free, private Chrome extension. Get your 0–100 Brainrot Score from real browsing, watch the 7-day trend, and reverse it with a daily plan. Nothing leaves your device." />
+<meta property="og:url" content="https://brainrot.example/" />
+<meta property="og:image" content="https://brainrot.example/assets/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="A glitching Brainrot Score of 87 out of 100 on a black diagnostic report." />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Brainrot — measure it. reverse it." />
+<meta name="twitter:description" content="A free, open-source, 100% local Chrome extension that scores your brainrot and helps you claw your attention back." />
+<meta name="twitter:image" content="https://brainrot.example/assets/og-image.png" />
+<meta name="twitter:image:alt" content="Brainrot Score 87/100 diagnostic card." />
+
+<link rel="icon" type="image/png" href="assets/icon48.png" />
+
+<!-- Structured data: the product -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Brainrot",
+  "applicationCategory": "BrowserApplication",
+  "operatingSystem": "Chrome, Edge, Brave, and other Chromium browsers",
+  "description": "A free, open-source Chrome extension that calculates a 0–100 Brainrot Score from your browsing, shows a 7-day trend, and gives a daily plan to reverse it. All data stays on your device.",
+  "url": "https://brainrot.example/",
+  "image": "https://brainrot.example/assets/og-image.png",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true
+}
+</script>
+<!-- Structured data: FAQ (rich-result eligible) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a Brainrot Score?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A single 0–100 number where higher is worse. It's the ratio of time you spend on high-brainrot feeds versus deep-work sites, adjusted for volume and offset by focused time. It measures intentional attention, not total screen time." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Brainrot free?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Brainrot is free and open source under the MIT license. There is no paid tier, no ads, and no upsell." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Brainrot send my browsing data anywhere?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Brainrot has no backend and makes zero network requests. Everything is stored locally on your device. There are no accounts, no analytics, and no telemetry." }
+    },
+    {
+      "@type": "Question",
+      "name": "What data does Brainrot read?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Only the domain of your active tab, plus whether a YouTube URL is a Short. It never reads page contents, full URLs, history, or anything from background tabs." }
+    }
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --bg:#0A0A0A; --bg-2:#111111; --surface:#161616; --line:#242424;
+    --good:#39FF14; --bad:#FF2E63; --warn:#FF4500;
+    --text:#E8E8E8; --dim:#888888;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:system-ui,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  /* global CRT scanline veil */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.28) 2px 3px);
+    mix-blend-mode:multiply;
+  }
+  a{color:var(--good);text-decoration:none}
+  a:hover{text-decoration:underline}
+  :focus-visible{outline:2px solid var(--good);outline-offset:3px}
+  .skip{position:absolute;left:-999px;top:0;background:var(--good);color:#000;padding:.6rem 1rem;z-index:20}
+  .skip:focus{left:8px;top:8px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--dim)}
+
+  /* top bar */
+  header.bar{position:sticky;top:0;z-index:10;background:rgba(10,10,10,.82);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .bar .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{font-family:var(--mono);font-weight:700;letter-spacing:.18em;font-size:1rem}
+  .brand b{color:var(--bad)}
+  .bar nav{display:flex;gap:22px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em}
+  .bar nav a{color:var(--dim)}.bar nav a:hover{color:var(--text);text-decoration:none}
+  .bar .ghost{border:1px solid var(--good);color:var(--good);padding:.4rem .8rem;border-radius:2px}
+  @media(max-width:620px){.bar nav a:not(.ghost){display:none}}
+
+  /* hero */
+  .hero{position:relative;padding:76px 0 64px;border-bottom:1px solid var(--line);overflow:hidden}
+  .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+  @media(max-width:820px){.hero .wrap{grid-template-columns:1fr;gap:36px}}
+  h1{font-size:clamp(2.4rem,6vw,4rem);line-height:1.02;margin:.4rem 0 .2rem;letter-spacing:-.02em;font-weight:800}
+  h1 .rot{color:var(--bad)}
+  .lede{color:var(--dim);font-size:1.12rem;max-width:34ch;margin:.7rem 0 0}
+  .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
+  .btn{font-family:var(--mono);font-size:.88rem;letter-spacing:.06em;padding:.85rem 1.3rem;border-radius:2px;border:1px solid transparent;cursor:pointer;display:inline-block}
+  .btn-primary{background:var(--good);color:#000;font-weight:700}
+  .btn-primary:hover{text-decoration:none;box-shadow:0 0 0 3px rgba(57,255,20,.25)}
+  .btn-ghost{border-color:var(--line);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--dim);text-decoration:none}
+  .trust{margin-top:18px;font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--dim)}
+  .trust b{color:var(--good);font-weight:600}
+
+  /* live diagnostic card (the signature) */
+  .diag{background:linear-gradient(180deg,var(--surface),#0d0d0d);border:1px solid var(--line);
+    border-radius:6px;padding:26px 26px 22px;position:relative;overflow:hidden}
+  .diag::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 3px,rgba(0,0,0,.22) 3px 4px)}
+  .diag .row{display:flex;justify-content:space-between;align-items:baseline;
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--dim);text-transform:uppercase}
+  .status{color:var(--bad)}
+  .score{position:relative;text-align:center;font-weight:800;line-height:1;
+    font-size:clamp(6rem,20vw,10rem);margin:6px 0 0;color:var(--bad);font-variant-numeric:tabular-nums}
+  .score .g1,.score .g2{position:absolute;inset:0;opacity:.55}
+  .score .g1{color:var(--good);transform:translateX(-4px)}
+  .score .g2{color:var(--warn);transform:translateX(4px)}
+  .score.glitch .g1{animation:gl 1.6s steps(2) infinite}
+  .score.glitch .g2{animation:gl 1.9s steps(2) infinite reverse}
+  @keyframes gl{0%,92%,100%{transform:translateX(0)}94%{transform:translate(-5px,1px)}96%{transform:translate(4px,-1px)}}
+  .score-label{text-align:center;font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;color:var(--dim);margin-top:2px}
+  .spark{width:100%;height:56px;margin:16px 0 6px;display:block}
+  .diag .diagnosis{font-family:var(--mono);font-size:.82rem;color:var(--text);border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
+  .diag .diagnosis::before{content:"> ";color:var(--good)}
+  .caption{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;color:var(--dim);margin-top:12px;text-align:center}
+  @media(prefers-reduced-motion:reduce){.score.glitch .g1,.score.glitch .g2{animation:none}}
+
+  /* generic section */
+  section{padding:66px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:clamp(1.6rem,3.4vw,2.2rem);letter-spacing:-.01em;margin:.3rem 0 8px;font-weight:800}
+  .section-lede{color:var(--dim);max-width:60ch;margin:0 0 30px}
+
+  /* how / features grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px}
+  .card .k{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;color:var(--good);text-transform:uppercase}
+  .card h3{margin:.5rem 0 .4rem;font-size:1.12rem}
+  .card p{margin:0;color:var(--dim);font-size:.96rem}
+
+  /* formula strip */
+  .formula{background:var(--bg-2);border:1px solid var(--line);border-radius:6px;
+    font-family:var(--mono);padding:22px 24px;overflow-x:auto}
+  .formula code{color:var(--text);font-size:.92rem;white-space:pre;display:block;line-height:1.7}
+  .formula .c{color:var(--dim)}
+  .formula .hi{color:var(--good)}
+  .formula .bad{color:var(--bad)}
+
+  /* install steps */
+  ol.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:grid;gap:14px}
+  ol.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);
+    border-radius:6px;padding:18px 20px 18px 64px;position:relative}
+  ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:20px;top:16px;
+    font-family:var(--mono);color:var(--bad);font-weight:700;font-size:1.1rem}
+  ol.steps b{color:var(--text)}
+  ol.steps code{font-family:var(--mono);background:#000;border:1px solid var(--line);padding:.1rem .4rem;border-radius:3px;color:var(--good);font-size:.86rem}
+
+  /* privacy */
+  .privacy{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px}
+  @media(max-width:640px){.privacy{grid-template-columns:1fr}}
+  .privacy div{font-family:var(--mono);font-size:.9rem;color:var(--text);
+    border-left:2px solid var(--good);padding:.4rem 0 .4rem 14px}
+  .privacy .x{border-left-color:var(--bad);color:var(--dim)}
+
+  /* faq */
+  details{border:1px solid var(--line);border-radius:6px;background:var(--surface);margin-bottom:12px}
+  details summary{cursor:pointer;padding:18px 20px;font-weight:700;list-style:none;
+    display:flex;justify-content:space-between;align-items:center}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";font-family:var(--mono);color:var(--good);font-size:1.3rem}
+  details[open] summary::after{content:"–"}
+  details .body{padding:0 20px 20px;color:var(--dim);max-width:70ch}
+
+  footer{padding:40px 0 56px;color:var(--dim)}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:.8rem}
+  footer a{color:var(--dim)}footer a:hover{color:var(--good)}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="wrap">
+    <span class="brand">BRAIN<b>ROT</b></span>
+    <nav aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#install">Install</a>
+      <a href="#faq">FAQ</a>
+      <a class="ghost" href="#install">Get it — free</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="h1">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Local-only diagnostic · Chrome extension</p>
+        <h1 id="h1">Your feed is rewiring you.<br>Here's the <span class="rot">number.</span></h1>
+        <p class="lede">Brainrot reads your active tab, scores your browsing 0–100, and hands you a daily plan to claw your attention back. Free, open source, and it never leaves your machine.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#install">Install free</a>
+          <a class="btn btn-ghost" href="#how">See how it scores</a>
+        </div>
+        <p class="trust"><b>100% local</b> · no account · no servers · MIT licensed</p>
+      </div>
+
+      <!-- signature: a live diagnostic card mirroring the extension -->
+      <div class="diag" role="img" aria-label="Live demo of a Brainrot diagnostic card showing a score of 87 out of 100, status COOKED, a rising 7-day trend, and the diagnosis that TikTok is the biggest time sink.">
+        <div class="row"><span>Brainrot // diagnostic</span><span class="status">STATUS: COOKED</span></div>
+        <div class="score glitch" id="score" aria-hidden="true">
+          <span class="g1">87</span><span class="g2">87</span><span id="scoreNum">87</span>
+        </div>
+        <div class="score-label">BRAINROT SCORE / 100</div>
+        <svg class="spark" viewBox="0 0 320 56" preserveAspectRatio="none" aria-hidden="true">
+          <polyline id="sparkline" fill="none" stroke="#FF2E63" stroke-width="2.5"
+            points="0,40 53,34 106,30 160,33 213,22 266,19 320,10" />
+        </svg>
+        <p class="diagnosis">TikTok is eating <b>3h 12m</b> of your day. Trend: rising.</p>
+        <p class="caption">measured locally · nothing left this device</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2 id="how-h">Three signals, one honest number</h2>
+      <p class="section-lede">Brainrot watches the domain of whatever tab is in front of you — nothing else — and turns a week of it into a score you can't argue with.</p>
+      <div class="grid">
+        <article class="card">
+          <div class="k">01 · Track</div>
+          <h3>Active-tab time</h3>
+          <p>Only the focused tab's domain is counted, on a self-correcting timer. Background tabs, a closed lid, or a sleeping browser never inflate your time.</p>
+        </article>
+        <article class="card">
+          <div class="k">02 · Classify</div>
+          <h3>Feeds vs. deep work</h3>
+          <p>Sites sort into high-brainrot feeds, focused deep-work, or neutral. YouTube counts as neutral — but Shorts count against you. Every list is editable.</p>
+        </article>
+        <article class="card">
+          <div class="k">03 · Score</div>
+          <h3>Reverse it</h3>
+          <p>A live score, a 7-day trend, your top time sinks, and a daily recovery plan that names your worst offender and gives you one concrete move.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMULA -->
+  <section id="formula" aria-labelledby="f-h">
+    <div class="wrap">
+      <p class="eyebrow">No black box</p>
+      <h2 id="f-h">The math is right here</h2>
+      <p class="section-lede">The score measures <em>intentional attention</em>, not raw screen time. Neutral browsing is ignored on purpose. Every weight lives in one config file you can change.</p>
+      <div class="formula" role="img" aria-label="Scoring formula. Ratio equals high-brainrot seconds over total tracked seconds. Volume saturates with high-brainrot minutes. Raw score is 60 percent ratio plus 40 percent volume, times 100. A deep-work rebate subtracts up to 25 points. The final score is clamped between 0 and 100.">
+<code><span class="c"># per day: H = high-brainrot seconds, L = deep-work seconds</span>
+ratio  = <span class="bad">H</span> / (H + L + 1)
+volume = 1 - exp(-H<span class="c">min</span> / 120)          <span class="c"># saturates — endless scroll ≈ capped</span>
+raw    = 100 * (0.6*ratio + 0.4*volume)
+rebate = 25 * (1 - exp(-L<span class="c">min</span> / 90))     <span class="hi"># focused time buys it back</span>
+<span class="hi">score</span>  = clamp(raw - rebate, 0, 100)</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section id="privacy" aria-labelledby="p-h">
+    <div class="wrap">
+      <p class="eyebrow">Privacy is the product</p>
+      <h2 id="p-h">There is no server to leak</h2>
+      <p class="section-lede">Brainrot can't sell your data because it never has it. No backend, no account, no network request — verify it yourself in the Network tab.</p>
+      <div class="privacy">
+        <div>Everything stored locally on your device</div>
+        <div>Zero network requests · no analytics</div>
+        <div>Reads only the active tab's domain</div>
+        <div>Three permissions: storage · tabs · alarms</div>
+        <div class="x">✕ No page contents or full URLs</div>
+        <div class="x">✕ No history, cookies, or background tabs</div>
+        <div class="x">✕ No accounts or sign-in</div>
+        <div class="x">✕ No remote code or eval</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section id="install" aria-labelledby="i-h">
+    <div class="wrap">
+      <p class="eyebrow">Install in 30 seconds</p>
+      <h2 id="i-h">Load it unpacked — no build step</h2>
+      <p class="section-lede">Brainrot ships as plain ES modules. There's nothing to compile and nothing to <code style="font-family:var(--mono)">npm install</code>.</p>
+      <ol class="steps">
+        <li><b>Download the source</b> and unzip it anywhere on your machine.</li>
+        <li>Open <code>chrome://extensions</code> and turn on <b>Developer mode</b> (top-right).</li>
+        <li>Click <b>Load unpacked</b> and select the <code>brainrot/</code> folder.</li>
+        <li>Pin the icon, browse normally for a day, then open the popup to meet your number.</li>
+      </ol>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#">Download .zip</a>
+        <a class="btn btn-ghost" href="#">View source on GitHub</a>
+      </div>
+      <p class="trust">Works on any Chromium browser — Chrome, Edge, Brave, Arc, Opera.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <p class="eyebrow">Questions</p>
+      <h2 id="faq-h">FAQ</h2>
+      <details>
+        <summary>What exactly is a Brainrot Score?</summary>
+        <div class="body">A single 0–100 number where higher is worse. It weighs time on high-brainrot feeds against your focused deep-work time, factors in how much you piled on, and gives points back for real focus. It's a measure of intentional attention, not total screen time.</div>
+      </details>
+      <details>
+        <summary>Is it really free?</summary>
+        <div class="body">Yes — free and open source under the MIT license. No paid tier, no ads, no upsell, no "pro" version dangling the useful features.</div>
+      </details>
+      <details>
+        <summary>Does it track everything I do?</summary>
+        <div class="body">No. It reads only the domain of your active tab (plus whether a YouTube URL is a Short). It never touches page contents, full URLs, history, cookies, or background tabs, and it stores nothing off your device.</div>
+      </details>
+      <details>
+        <summary>Can I change what counts as brainrot?</summary>
+        <div class="body">Fully. The settings page lets you add sites to the high-brainrot, deep-work, or ignore lists, and every scoring weight lives in a single config file.</div>
+      </details>
+      <details>
+        <summary>Which browsers work?</summary>
+        <div class="body">Any Chromium-based browser that supports Manifest V3 — Chrome, Edge, Brave, Arc, and Opera among them.</div>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>BRAIN<b style="color:var(--bad)">ROT</b> · measure it. reverse it.</span>
+    <span>
+      <a href="#privacy">Privacy</a> ·
+      <a href="#">Source</a> ·
+      <a href="#">MIT License</a> ·
+      built local, stays local
+    </span>
+  </div>
+</footer>
+
+<script>
+  // Count-up + settle on the hero score. Purely decorative; respects reduced motion.
+  (function () {
+    var num = document.getElementById('scoreNum');
+    var g1 = document.querySelector('.score .g1');
+    var g2 = document.querySelector('.score .g2');
+    var target = 87;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !num) return;
+    var v = 0, t0 = null, dur = 1100;
+    function frame(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      v = Math.round(eased * target);
+      // brief glitchy overshoot near the end
+      var jitter = p > 0.8 && p < 1 ? Math.floor((Math.random() - 0.5) * 6) : 0;
+      var shown = Math.min(100, Math.max(0, v + jitter));
+      num.textContent = shown; g1.textContent = shown; g2.textContent = shown;
+      if (p < 1) requestAnimationFrame(frame);
+      else { num.textContent = target; g1.textContent = target; g2.textContent = target; }
+    }
+    requestAnimationFrame(frame);
+  })();
+</script>
+</body>
+</html>
