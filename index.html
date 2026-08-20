@@ -11,15 +11,15 @@
 <meta name="author" content="Brainrot contributors" />
 <meta name="robots" content="index, follow" />
 <meta name="theme-color" content="#0A0A0A" />
-<link rel="canonical" href="https://brainrot.example/" />
+<link rel="canonical" href="https://wushu75.github.io/Brainrot/" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Brainrot" />
 <meta property="og:title" content="Brainrot — the number your feed doesn't want you to see" />
 <meta property="og:description" content="Free, private Chrome extension. Get your 0–100 Brainrot Score from real browsing, watch the 7-day trend, and reverse it with a daily plan. Nothing leaves your device." />
-<meta property="og:url" content="https://brainrot.example/" />
-<meta property="og:image" content="https://brainrot.example/assets/og-image.png" />
+<meta property="og:url" content="https://wushu75.github.io/Brainrot/" />
+<meta property="og:image" content="https://wushu75.github.io/Brainrot/assets/og-image.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="A glitching Brainrot Score of 87 out of 100 on a black diagnostic report." />
@@ -28,7 +28,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Brainrot — measure it. reverse it." />
 <meta name="twitter:description" content="A free, open-source, 100% local Chrome extension that scores your brainrot and helps you claw your attention back." />
-<meta name="twitter:image" content="https://brainrot.example/assets/og-image.png" />
+<meta name="twitter:image" content="https://wushu75.github.io/Brainrot/assets/og-image.png" />
 <meta name="twitter:image:alt" content="Brainrot Score 87/100 diagnostic card." />
 
 <link rel="icon" type="image/png" href="assets/icon48.png" />
@@ -42,8 +42,13 @@
   "applicationCategory": "BrowserApplication",
   "operatingSystem": "Chrome, Edge, Brave, and other Chromium browsers",
   "description": "A free, open-source Chrome extension that calculates a 0–100 Brainrot Score from your browsing, shows a 7-day trend, and gives a daily plan to reverse it. All data stays on your device.",
-  "url": "https://brainrot.example/",
-  "image": "https://brainrot.example/assets/og-image.png",
+  "url": "https://wushu75.github.io/Brainrot/",
+  "image": "https://wushu75.github.io/Brainrot/assets/og-image.png",
+  "downloadUrl": "https://chromewebstore.google.com/detail/brainrot/hiiglphehjccggfahiocjoaijkpfdbdp",
+  "installUrl": "https://chromewebstore.google.com/detail/brainrot/hiiglphehjccggfahiocjoaijkpfdbdp",
+  "sameAs": [
+    "https://chromewebstore.google.com/detail/brainrot/hiiglphehjccggfahiocjoaijkpfdbdp"
+  ],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "license": "https://opensource.org/licenses/MIT",
   "isAccessibleForFree": true
@@ -132,6 +137,10 @@
   .btn-primary:hover{text-decoration:none;box-shadow:0 0 0 3px rgba(57,255,20,.25)}
   .btn-ghost{border-color:var(--line);color:var(--text)}
   .btn-ghost:hover{border-color:var(--dim);text-decoration:none}
+  .btn-store{display:inline-flex;align-items:center;gap:.55rem}
+  .btn-store svg{width:18px;height:18px;flex:0 0 auto}
+  .bar .ghost.btn-store{padding:.4rem .7rem}
+  .bar .ghost.btn-store svg{width:15px;height:15px}
   .trust{margin-top:18px;font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;color:var(--dim)}
   .trust b{color:var(--good);font-weight:600}
 
@@ -220,7 +229,10 @@
       <a href="#privacy">Privacy</a>
       <a href="#install">Install</a>
       <a href="#faq">FAQ</a>
-      <a class="ghost" href="#install">Get it — free</a>
+      <a class="ghost btn-store" href="https://chromewebstore.google.com/detail/brainrot/hiiglphehjccggfahiocjoaijkpfdbdp" target="_blank" rel="noopener" aria-label="Add Brainrot to Chrome — opens the Chrome Web Store">
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 16h18M24 16 15 32M24 16 33 32" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/></svg>
+        Add to Chrome
+      </a>
     </nav>
   </div>
 </header>
@@ -235,10 +247,13 @@
         <h1 id="h1">Your feed is rewiring you.<br>Here's the <span class="rot">number.</span></h1>
         <p class="lede">Brainrot reads your active tab, scores your browsing 0–100, and hands you a daily plan to claw your attention back. Free, open source, and it never leaves your machine.</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="#install">Install free</a>
+          <a class="btn btn-primary btn-store" href="https://chromewebstore.google.com/detail/brainrot/hiiglphehjccggfahiocjoaijkpfdbdp" target="_blank" rel="noopener" aria-label="Add Brainrot to Chrome — opens the Chrome Web Store">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 16h18M24 16 15 32M24 16 33 32" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/></svg>
+            Add to Chrome — free
+          </a>
           <a class="btn btn-ghost" href="#how">See how it scores</a>
         </div>
-        <p class="trust"><b>100% local</b> · no account · no servers · MIT licensed</p>
+        <p class="trust"><b>Live on the Chrome Web Store</b> · 100% local · no account · MIT licensed</p>
       </div>
 
       <!-- signature: a live diagnostic card mirroring the extension -->
@@ -324,17 +339,20 @@ rebate = 25 * (1 - exp(-L<span class="c">min</span> / 90))     <span class="hi">
   <section id="install" aria-labelledby="i-h">
     <div class="wrap">
       <p class="eyebrow">Install in 30 seconds</p>
-      <h2 id="i-h">Load it unpacked — no build step</h2>
-      <p class="section-lede">Brainrot ships as plain ES modules. There's nothing to compile and nothing to <code style="font-family:var(--mono)">npm install</code>.</p>
+      <h2 id="i-h">One click from the Chrome Web Store</h2>
+      <p class="section-lede">Brainrot is live and free. Add it, browse normally for a day, then open the popup to meet your number.</p>
       <ol class="steps">
-        <li><b>Download the source</b> and unzip it anywhere on your machine.</li>
-        <li>Open <code>chrome://extensions</code> and turn on <b>Developer mode</b> (top-right).</li>
-        <li>Click <b>Load unpacked</b> and select the <code>brainrot/</code> folder.</li>
-        <li>Pin the icon, browse normally for a day, then open the popup to meet your number.</li>
+        <li><b>Add to Chrome</b> from the Web Store — one click, no account, no setup.</li>
+        <li><b>Pin the icon</b> so your score is always a click away.</li>
+        <li><b>Browse like you normally would</b> for a day.</li>
+        <li><b>Open the popup</b> to see your Brainrot Score, your trend, and today's plan.</li>
       </ol>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#">Download .zip</a>
-        <a class="btn btn-ghost" href="#">View source on GitHub</a>
+        <a class="btn btn-primary btn-store" href="https://chromewebstore.google.com/detail/brainrot/hiiglphehjccggfahiocjoaijkpfdbdp" target="_blank" rel="noopener" aria-label="Add Brainrot to Chrome — opens the Chrome Web Store">
+          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 16h18M24 16 15 32M24 16 33 32" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/></svg>
+          Add to Chrome — free
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/wushu75/Brainrot" target="_blank" rel="noopener">View source on GitHub</a>
       </div>
       <p class="trust">Works on any Chromium browser — Chrome, Edge, Brave, Arc, Opera.</p>
     </div>
@@ -374,8 +392,9 @@ rebate = 25 * (1 - exp(-L<span class="c">min</span> / 90))     <span class="hi">
     <span>BRAIN<b style="color:var(--bad)">ROT</b> · measure it. reverse it.</span>
     <span>
       <a href="#privacy">Privacy</a> ·
-      <a href="#">Source</a> ·
-      <a href="#">MIT License</a> ·
+      <a href="https://chromewebstore.google.com/detail/brainrot/hiiglphehjccggfahiocjoaijkpfdbdp" target="_blank" rel="noopener">Chrome Web Store</a> ·
+      <a href="https://github.com/wushu75/Brainrot" target="_blank" rel="noopener">Source</a> ·
+      <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a> ·
       built local, stays local
     </span>
   </div>
